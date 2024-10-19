@@ -9,11 +9,24 @@ A Next.js application that uses the GitHub API to find GitHub profiles. This app
 - **Error Handling:** User-friendly error messages for scenarios such as user not found, no repositories, or API request failures.
 - **Dark Mode:** A toggle to switch between light and dark themes for a better user experience.
 
+## Dark Mode Toggle
+
+The application features a dark mode toggle that allows users to switch between light and dark themes. When the button is clicked, the application checks if the "dark" class is currently applied to the document. If it is, dark mode is enabled; if not, light mode is used. This toggle enhances the user experience by providing a comfortable viewing option for users in low-light environments.
+
+## How It Works
+
+- Users input a GitHub username in the search bar and press the search icon or hit enter.
+- The app makes an API call to GitHub and retrieves the profile and public repositories for the entered username.
+- Repositories are displayed with details such as name, description, stars, and forks.
+- The repositories are paginated, with up to **30 repositories** shown per page. Users can navigate between pages if more repositories are available.
+- The app includes a dark mode toggle button, allowing users to switch between light and dark themes.
+
+
 ## Getting Started
 
 To run the application locally, follow these steps:
 
-1. Clone the repository:
+1. Clone the repository and navigate to the project directory:
     ```bash
     git clone https://github.com/Ayomide0123/github_profile_finder.git
     cd github_profile_finder
@@ -41,9 +54,7 @@ To run the application locally, follow these steps:
 
 You can start editing the page by modifying the files in the `app` directory. The page auto-updates as you edit the files.
 
-## Dark Mode Toggle
 
-The application features a dark mode toggle that allows users to switch between light and dark themes. When the button is clicked, the application checks if the "dark" class is currently applied to the document. If it is, dark mode is enabled; if not, light mode is used. This toggle enhances the user experience by providing a comfortable viewing option for users in low-light environments.
 
 ## Learn More
 

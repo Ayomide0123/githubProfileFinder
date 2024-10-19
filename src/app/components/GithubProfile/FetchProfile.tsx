@@ -125,7 +125,7 @@ export default function FetchProfile() {
       </button>
 
       {/* Form for searching GitHub profiles */}
-      <form onSubmit={handleSearch} className="w-96 flex items-center justify-between p-2 mt-4 border border-slate-950 dark:border-white rounded-full">
+      <form onSubmit={handleSearch} className="min-w-72 flex items-center justify-between p-2 mt-4 border border-slate-950 dark:border-white rounded-full">
         <input
           type="text"
           value={username}

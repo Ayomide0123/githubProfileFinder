@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import { FiSearch } from 'react-icons/fi';
 import Profile from './Profile';
 import RepoList from './RepoList';
 import { ProfileSkeleton, RepoListSkeleton } from './LoadingSkeleton';
@@ -19,19 +20,17 @@ interface Error {
 }
 
 export default function FetchProfile() {
-  // State variables to manage user input, profile, repositories, and loading status
-  const [username, setUsername] = useState('');           // Input username
-  const [searchTerm, setSearchTerm] = useState('');       // Term used to search for a GitHub profile
-  const [profile, setProfile] = useState(null);           // GitHub profile data
-  const [repos, setRepos] = useState<Repo[]>([]);         // List of repositories
-  const [loading, setLoading] = useState(false);          // Loading state
-  const [error, setError] = useState('');                 // Error message
-  const [totalRepos, setTotalRepos] = useState(0);        // Total number of repositories
-  const [currentPage, setCurrentPage] = useState(1);      // Current page for repo pagination
-  const reposPerPage = 10;                                // Number of repos displayed per page
-  const [darkMode, setDarkMode] = useState<boolean>(false); // State to manage dark mode
+  const [username, setUsername] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [profile, setProfile] = useState(null);
+  const [repos, setRepos] = useState<Repo[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [totalRepos, setTotalRepos] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reposPerPage = 30;
+  const [darkMode, setDarkMode] = useState<boolean>(false);
 
-  // Fetches repositories for the given username and page number
   const fetchRepos = async (username: string, page: number) => {
     try {
       const reposResponse = await fetch(
@@ -43,28 +42,27 @@ export default function FetchProfile() {
         throw new Error("GitHub API rate limit exceeded. Please try again later.");
       }
 
-      setRepos(reposData);            // Set repos in state
-      setCurrentPage(page);           // Update the current page number
+      setRepos(reposData);
+      setCurrentPage(page);
 
       if (reposData.length === 0) {
-        setError("This user has no public repositories."); // Error message if no repos are found
+        setError("This user has no public repositories.");
       }
     } catch (err) {
       const error = err as Error;
-      setError(error.message || 'Error fetching repositories'); // Handle any errors during fetch
+      setError(error.message || 'Error fetching repositories');
     }
   };
 
-  // Effect hook to fetch user profile when searchTerm changes
   useEffect(() => {
     if (!searchTerm) return;
 
     const fetchGitHubUser = async () => {
-      setLoading(true);            // Set loading state to true
-      setProfile(null);            // Clear previous profile data
-      setRepos([]);                // Clear previous repo data
-      setCurrentPage(1);           // Reset current page
-      setError('');                // Clear any previous errors
+      setLoading(true);
+      setProfile(null);
+      setRepos([]);
+      setCurrentPage(1);
+      setError('');
 
       try {
         const profileResponse = await fetch(`https://api.github.com/users/${searchTerm}`);
@@ -77,40 +75,36 @@ export default function FetchProfile() {
         }
 
         const profileData = await profileResponse.json();
-        setProfile(profileData);                    // Set the profile data
-        setTotalRepos(profileData.public_repos);    // Set the total number of public repos
+        setProfile(profileData);
+        setTotalRepos(profileData.public_repos);
 
-        await fetchRepos(searchTerm, 1);            // Fetch the first page of repos
+        await fetchRepos(searchTerm, 1);
       } catch (err) {
         const error = err as Error;
-        setError(error.message || 'Error fetching data'); // Handle errors if they occur
+        setError(error.message || 'Error fetching data');
       } finally {
-        setLoading(false);           // Set loading state to false when done
+        setLoading(false);
       }
     };
 
     fetchGitHubUser();
   }, [searchTerm]);
 
-  // Handles the form submission when searching for a user
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (username.trim() !== '') {
-      setSearchTerm(username);      // Set the search term to the username entered
+      setSearchTerm(username);
     }
   };
 
-  // Loads repositories for the given page
   const loadRepos = async (page: number) => {
     setLoading(true);
-    await fetchRepos(searchTerm, page); // Fetch the repos for the selected page
+    await fetchRepos(searchTerm, page);
     setLoading(false);
   };
 
-  // Calculate the total number of pages for pagination
   const totalPages = Math.ceil(totalRepos / reposPerPage);
 
-  // Toggle dark mode by adding/removing the 'dark' class on the <html> element
   const toggleDarkMode = () => {
     const html = document.documentElement;
     html.classList.toggle('dark');
@@ -125,24 +119,26 @@ export default function FetchProfile() {
       {/* Dark Mode Toggle Button */}
       <button
         onClick={toggleDarkMode}
-        className={`mt-4 p-2 rounded-md ${
-          darkMode ? "bg-white text-black" : "bg-black text-white"
-        }`}
+        className={`mt-4 p-2 rounded-md ${darkMode ? "bg-white text-black" : "bg-black text-white"}`}
       >
         {darkMode ? "Light Mode" : "Dark Mode"}
       </button>
 
       {/* Form for searching GitHub profiles */}
-      <form onSubmit={handleSearch}>
+      <form onSubmit={handleSearch} className="w-96 flex items-center justify-between p-2 mt-4 border border-slate-950 dark:border-white rounded-full">
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="mt-4 p-2 border rounded-md bg-white text-black dark:bg-gray-800 dark:text-white"
+          className="w-full p-2 bg-transparent text-black dark:text-white focus:outline-none"
           placeholder="Enter GitHub username"
         />
-        <button type="submit" className="mt-4 p-2 bg-blue-500 text-white dark:bg-yellow-500 rounded-md">
-          Search
+        <button
+          type="submit"
+          className="p-2 text-white bg-transparent rounded-r-full flex justify-center items-center focus:outline-none"
+          aria-label="Search GitHub profile"
+        >
+          <FiSearch className="text-gray-800 dark:text-gray-300" size={24} />
         </button>
       </form>
 
@@ -164,7 +160,7 @@ export default function FetchProfile() {
           loadRepos={loadRepos}
         />
       ) : (
-        error && <ErrorMessage message={error} /> // Display error message if present
+        error && <ErrorMessage message={error} />
       )}
     </div>
   );
